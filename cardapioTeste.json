@@ -1,0 +1,22 @@
+{
+    "1":{
+        "nome": "Pizza Portuguesa",
+        "descricao": "Pizza com molho de tomate, mussarela, presunto, ovo, cebola e azeitona",
+        "valor": 79.90
+    },
+    "2":{
+        "nome": "Hamburguer basico",
+        "descricao": "hamburguer bovino com tomate, alface e maionese",
+        "valor": 25.00
+    },
+    "3":{
+        "nome": "Bife a milanesa",
+        "descricao": "Bife empanado servido com arroz, batata frita, feijao e salada",
+        "valor": 23.00
+    },
+    "4":{
+        "nome": "Frango a milanesa",
+        "descricao": "Peito de frango empanado servido com arroz, batata frita, feijao e salada",
+        "valor": 23.00
+    }
+}
