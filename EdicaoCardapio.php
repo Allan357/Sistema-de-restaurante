@@ -1,19 +1,37 @@
 <?php
-function editarMenu($id, $nome, $descricao, $valor){
-    $jsonFile = 'cardapioTeste.json';
-    if (empty($nome)|| empty($descricao)||$valor<=0){
-        return ['aviso'=> 'Nome, descricao ou valor invalidos'];
+class MenuItem{
+    public $id;
+    public $nome;
+    public $descricao;
+    public $valor;
+
+    public function __construct($id,$nome,$descricao,$valor) {
+        $this->id = $id;
+        $this->nome = $nome;
+        $this->descricao = $descricao;
+        $this->valor = floatval($valor);
     }
-    $menuItems = json_decode(file_get_contents($jsonFile), true);
-    if (isset($menuItems[$id])){
-        $menuItems[$id]=[
-            'nome'=>$nome,
-            'descricao'=>$descricao,
-            'valor'=> floatval($valor)
-        ];
-        file_put_contents($jsonFile, json_encode($menuItems, JSON_PRETTY_PRINT));
-        return ['aviso'=>'Item atualizado com sucesso !'];
+}
+class Menu{
+    private $jsonFile = 'cardapioTeste.json';
+    private $menuItems = [];
+
+    public function __construct(){
+        if(file_exists($this->jsonFile)){
+            $this-> json_decode(file_get_contents($this->jsonFile), true) ?:[];
+        }
     }
-    return['aviso'=> 'Item nao encontrado, tente novamente!'];
+    public function EdicaoMenu($id,$nome,$descricao,$valor){
+        if (isset($this->menuItems[$id])){
+            $this->menuItems[$id]= [
+                'nome' => $nome,
+                'descricao'=> $descricao,
+                'valor'=> floatval($valor)
+            ];
+            file_put_contents($this->jsonFile, json_encode($this->menuItems, JSON_PRETTY_PRINT));
+            return['aviso'=>'item foi atualizado com sucesso'];
+        }
+        return['aviso'=>'Item nao foi encontrado! Tente novamente'];
+    }
 }
 ?>
