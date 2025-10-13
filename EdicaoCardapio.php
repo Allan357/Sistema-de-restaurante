@@ -33,5 +33,17 @@ class Menu{
         }
         return['aviso'=>'Item nao foi encontrado! Tente novamente'];
     }
+    public function adicionarItem($id, $nome, $descricao, $valor){
+        if (isset($this->menuItems[$id])) {
+            return ['aviso' => 'ID já existe! Escolha outro.'];
+        }
+        $this->menuItems[$id] = [
+            'nome' => $nome,
+            'descricao' => $descricao,
+            'valor' => floatval($valor)
+        ];
+        file_put_contents($this->jsonFile, json_encode($this->menuItems, JSON_PRETTY_PRINT));
+        return ['aviso' => 'Item adicionado com sucesso!'];
+    }
 }
 ?>
