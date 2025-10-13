@@ -18,7 +18,7 @@ class Menu{
 
     public function __construct(){
         if(file_exists($this->jsonFile)){
-            $this-> json_decode(file_get_contents($this->jsonFile), true) ?:[];
+             $this->menuItems = json_decode(file_get_contents($this->jsonFile), true) ?: [];
         }
     }
     public function EdicaoMenu($id,$nome,$descricao,$valor){
