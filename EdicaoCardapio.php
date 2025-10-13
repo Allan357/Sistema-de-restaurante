@@ -45,5 +45,8 @@ class Menu{
         file_put_contents($this->jsonFile, json_encode($this->menuItems, JSON_PRETTY_PRINT));
         return ['aviso' => 'Item adicionado com sucesso!'];
     }
+    public function getItensMenu(){
+        return $this->menuItems;
+    }
 }
 ?>
