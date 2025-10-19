@@ -1,0 +1,54 @@
+{
+"1": {
+    "id": 1,
+    "mesa": "Mesa 1",
+    "garcom": "Pablo" ,
+    "Pratos":[
+        {
+            "item_id": 1,
+            "quantidade": 1,
+            "observacoes": ""
+        },
+        {
+            "item_id": 2,
+            "quantidade": 1,
+            "observacoes": ""
+        }
+    ],
+    "dataHora": "19/10/2025T18:00-04:00",
+    "status": "pendente"
+},
+"2":{
+    "id": 2,
+    "mesa": "Mesa 2",
+    "garcom": "Allan" ,
+    "Pratos":[
+        {
+            "item_id": 3,
+            "quantidade": 1,
+            "observacoes": ""
+        } 
+    ],
+    "dataHora": "19/10/2025T18:15-04:00",
+    "status": "preparando"
+},
+"3":{
+    "id": 3,
+    "mesa": "Mesa 3",
+    "garcom": "Ygor" ,
+    "Pratos":[
+        {
+            "item_id": 1,
+            "quantidade": 1,
+            "observacoes": "Bem passado"
+        },
+        {
+            "item_id": 4,
+            "quantidade": 1,
+            "observacoes": "Adicionar molho extra"
+        }
+    ],
+    "dataHora": "19/10/2025T18:35-04:00",
+    "status": "Entregue"
+ }
+}
