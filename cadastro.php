@@ -19,7 +19,6 @@ class Pedido {
         $this->status = $status;
     }
 
-    // ...existing code...
     public function toArray() {
         return [
             'id' => $this->id,
@@ -31,7 +30,6 @@ class Pedido {
         ];
     }
 
-    // Adiciona um item ao pedido. Aceita ItemPedido ou array com 'item_id' e opcionalmente 'quantidade'.
     public function adicionarItem($item, $quantidade = 1) {
         if ($item instanceof ItemPedido) {
             $this->pratos[] = $item->toArray();
@@ -47,7 +45,6 @@ class Pedido {
             return true;
         }
 
-        // aceita um id simples como string/int
         if (is_int($item) || is_string($item)) {
             $this->pratos[] = [
                 'item_id' => $item,
@@ -129,6 +126,48 @@ class Menu {
             return ['aviso' => 'Pedido registrado com sucesso', 'id' => $novoId];
         } else {
             return ['aviso' => 'Erro ao salvar o pedido'];
+        }
+    }
+
+    public function criarEConfirmarPedido($mesa, $garcom, $pratos) {
+        // Registra o pedido primeiro
+        $resultado = $this->registrarPedido($mesa, $garcom, $pratos);
+        if (!isset($resultado['id'])) {
+            // retornou erro/aviso do registro
+            return $resultado;
+        }
+
+        $id = $resultado['id'];
+
+        // Carrega pedidos atuais
+        $pedidos = [];
+        if (file_exists($this->pedidosFile)) {
+            $pedidos = json_decode(file_get_contents($this->pedidosFile), true) ?: [];
+        }
+
+        if (!isset($pedidos[$id])) {
+            return ['aviso' => 'Pedido não encontrado após registro', 'id' => $id];
+        }
+
+        // Atualiza status e marca o envio
+        $pedidos[$id]['status'] = 'Enviado';
+        if (!ini_get('date.timezone')) {
+            date_default_timezone_set('America/Campo_Grande');
+        }
+        $pedidos[$id]['enviadoEm'] = date('c');
+
+        // Salva alterações
+        if (file_put_contents($this->pedidosFile, json_encode($pedidos, JSON_PRETTY_PRINT))) {
+            return [
+                'aviso' => 'Pedido enviado e confirmado',
+                'id' => $id,
+                'enviadoEm' => $pedidos[$id]['enviadoEm']
+            ];
+        } else {
+            return [
+                'aviso' => 'Pedido registrado, mas falha ao confirmar envio',
+                'id' => $id
+            ];
         }
     }
 }
