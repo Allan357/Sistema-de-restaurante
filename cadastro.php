@@ -19,6 +19,7 @@ class Pedido {
         $this->status = $status;
     }
 
+    // ...existing code...
     public function toArray() {
         return [
             'id' => $this->id,
@@ -28,6 +29,62 @@ class Pedido {
             'dataHora' => $this->dataHora,
             'status' => $this->status
         ];
+    }
+
+    // Adiciona um item ao pedido. Aceita ItemPedido ou array com 'item_id' e opcionalmente 'quantidade'.
+    public function adicionarItem($item, $quantidade = 1) {
+        if ($item instanceof ItemPedido) {
+            $this->pratos[] = $item->toArray();
+            return true;
+        }
+
+        if (is_array($item) && isset($item['item_id'])) {
+            $q = isset($item['quantidade']) ? $item['quantidade'] : $quantidade;
+            $this->pratos[] = [
+                'item_id' => $item['item_id'],
+                'quantidade' => $q
+            ];
+            return true;
+        }
+
+        // aceita um id simples como string/int
+        if (is_int($item) || is_string($item)) {
+            $this->pratos[] = [
+                'item_id' => $item,
+                'quantidade' => $quantidade
+            ];
+            return true;
+        }
+
+        throw new InvalidArgumentException('Item inválido para adicionar ao pedido.');
+    }
+}
+
+class ItemPedido {
+    public $item_id;
+    public $quantidade;
+    public $nome;
+    public $preco;
+
+    public function __construct($item_id, $quantidade = 1, $nome = null, $preco = null) {
+        $this->item_id = $item_id;
+        $this->quantidade = $quantidade;
+        $this->nome = $nome;
+        $this->preco = $preco;
+    }
+
+    public function toArray() {
+        $arr = [
+            'item_id' => $this->item_id,
+            'quantidade' => $this->quantidade
+        ];
+        if ($this->nome !== null) {
+            $arr['nome'] = $this->nome;
+        }
+        if ($this->preco !== null) {
+            $arr['preco'] = $this->preco;
+        }
+        return $arr;
     }
 }
 
