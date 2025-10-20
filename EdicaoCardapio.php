@@ -48,5 +48,13 @@ class Menu{
     public function getItensMenu(){
         return $this->menuItems;
     }
+    public function deletarItem($id){
+        if (isset($this->menuItems[$id])){
+            unset($menuItems[$id]);
+            file_put_contents($this->jsonFile, json_encode($this->menuItems, JSON_PRETTY_PRINT));
+            return['aviso'=>'item foi deletado com sucesso'];
+        }
+        return['aviso'=>'Item nao foi encontrado ou não existe!'];
+    }
 }
 ?>
