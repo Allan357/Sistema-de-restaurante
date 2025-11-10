@@ -6,7 +6,7 @@ class CardapioManager {
     private $storage;
 
     public function __construct() {
-        $this->storage = new JsonStorage('data/cardapio.json');
+        $this->storage = new JsonStorage('../data/cardapio.json');
     }
 
     // Incluir item (fluxo principal)
@@ -34,7 +34,7 @@ class CardapioManager {
             if ($item['id'] == $id) {
                 $item['name'] = $name;
                 $item['price'] = $price;
-                $item['ingredients'] = $ingredients;
+                $item['ingredients'] = array_map('trim', explode(',', $ingredients));
                 $this->storage->write($menu);
                 return "Item ID $id editado com sucesso.";
             }
@@ -47,7 +47,7 @@ class CardapioManager {
         $menu = $this->storage->read();
         foreach ($menu as $key => $item) {
             if ($item['id'] == $id) {
-                unset($menu[$key]);
+                $menu[$key]['removed'] = true;
                 $this->storage->write(array_values($menu)); // Reindexa array
                 return "Item ID $id removido com sucesso.";
             }
@@ -57,6 +57,8 @@ class CardapioManager {
 
     // Exibir cardápio atualizado
     public function getMenu() {
-        return $this->storage->read();
+        return array_filter($this->storage->read(), function($item) {
+            return !$item['removed'];
+        });
     }
 }

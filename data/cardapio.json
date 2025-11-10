@@ -1,24 +1,3 @@
 [
-    {
-        "id": 1,
-        "name": "aaaaaaaaaaaaaaa",
-        "price": 355,
-        "ingredients": [
-            "dasdsad",
-            "gdgdgdg",
-            "gdgdgbvb",
-            "vcncvncm"
-        ]
-    },
-    {
-        "id": 2,
-        "name": "testee",
-        "price": 22,
-        "ingredients": [
-            "h",
-            "hhfghfhdhdfnb",
-            "bnnfnfsss",
-            ""
-        ]
-    }
+
 ]
