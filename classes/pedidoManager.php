@@ -9,13 +9,14 @@ class PedidoManager {
     private $menuManager;
 
     public function __construct() {
-        $this->storage = new JsonStorage('data/pedidos.json');
+        $this->storage = new JsonStorage('../data/pedidos.json');
         $this->menuManager = new CardapioManager();
     }
 
     // Fazer pedido (fluxo principal para cliente/garçom)
     public function placeOrder($items, $mesa, $garcom) {
         $menu = $this->menuManager->getMenu();
+        
         // Verifica disponibilidade (fluxo secundário: produto indisponível)
         foreach ($items as $itemId) {
             $found = false;
@@ -54,6 +55,23 @@ class PedidoManager {
 
     // Listar pedidos (para cozinha ou admin)
     public function getOrders() {
-        return $this->storage->read();
+        return array_filter($this->storage->read(), function($order) {
+            return $order['status'] === 'enviado';
+        });
+    }
+    public function getOrdersGroupedByTable() {
+        $orders = $this->getOrders();
+        
+        $groupedOrders = [];
+
+        foreach ($orders as $order) {
+            $mesa = $order['mesa'];
+            if (!isset($groupedOrders[$mesa])) {
+                $groupedOrders[$mesa] = [];
+            }
+            $groupedOrders[$mesa][] = $order;
+        }
+
+        return $groupedOrders;
     }
 }

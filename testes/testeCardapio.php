@@ -1,6 +1,6 @@
 <?php
 
-require_once 'classes/cardapioManager.php';
+require_once '../classes/cardapioManager.php';
 
 $manager = new CardapioManager();
 
