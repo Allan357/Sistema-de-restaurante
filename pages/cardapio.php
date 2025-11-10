@@ -37,6 +37,7 @@ $pratos = $manager->getMenu();
     <title>Cardápio</title>
 </head>
 <body>
+    <?php include '../includes/navbar.php'; ?>
     <div class="container">
         <div class="modal" id="novoPrato">
             <div class="modal-dialog">

@@ -30,6 +30,7 @@
     <title>Pedidos</title>
 </head>
 <body>
+    <?php include '../includes/navbar.php'; ?>
     <div class="container mt-4">
         <h1 class="text-center mb-4">Pedidos Agrupados por Mesa</h1>
         <button class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#pedidoModal">Novo Pedido</button>
@@ -42,7 +43,7 @@
             <?php foreach ($pedidosAgrupados as $mesa => $pedidos): ?>
                 <div class="card mb-3">
                     <div class="card-header bg-primary text-white">
-                        <?= htmlspecialchars($mesa) ?>
+                        Mesa: <?= htmlspecialchars($mesa) ?>
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
