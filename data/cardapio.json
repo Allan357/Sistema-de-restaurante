@@ -1,23 +1,71 @@
 [
     {
         "id": 1,
-        "name": "fdsfadfsadfasfasd",
-        "price": 1000,
+        "name": "Espaguete \u00e0 Bolonhesa",
+        "price": 32,
         "ingredients": [
-            "gasgsagsgsg",
-            "basgsgsgsgstata"
+            "massa espaguete",
+            "carne mo\u00edda",
+            "molho de tomate",
+            "cebola",
+            "alho",
+            "azeite",
+            "queijo parmes\u00e3o"
         ],
         "removed": false
     },
     {
         "id": 2,
-        "name": "strogfsfsfsfsfsfsonoff",
-        "price": 500,
+        "name": "Lasanha de Frango com Queijo",
+        "price": 38,
         "ingredients": [
-            "tffafaomate",
-            "cebofafafafla",
-            "alafafaho",
-            "tttvinaaaaaaaagrsde"
+            "massa de lasanha",
+            "frango desfiado",
+            "molho branco",
+            "mussarela",
+            "presunto",
+            "parmes\u00e3o"
+        ],
+        "removed": false
+    },
+    {
+        "id": 3,
+        "name": "Strogonoff de Carne",
+        "price": 35,
+        "ingredients": [
+            "carne bovina",
+            "creme de leite",
+            "ketchup",
+            "mostarda",
+            "arroz",
+            "batata palha"
+        ],
+        "removed": false
+    },
+    {
+        "id": 4,
+        "name": "Brownie com Sorvete",
+        "price": 18,
+        "ingredients": [
+            "chocolate",
+            "manteiga",
+            "a\u00e7\u00facar",
+            "ovos",
+            "farinha",
+            "sorvete de creme"
+        ],
+        "removed": false
+    },
+    {
+        "id": 5,
+        "name": "Frango \u00e0 Parmegiana",
+        "price": 36,
+        "ingredients": [
+            "fil\u00e9 de frango empanado",
+            "molho de tomate",
+            "queijo mussarela",
+            "arroz",
+            "batata frita"
         ],
         "removed": false
     }

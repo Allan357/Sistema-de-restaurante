@@ -2,19 +2,18 @@
     require_once '../classes/PedidoManager.php';
     require_once '../classes/CardapioManager.php';
 
+    $pedidoManager = new PedidoManager();
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mesa = htmlspecialchars($_POST['mesa']);
         $garcom = htmlspecialchars($_POST['garcom']);
         $pratos = array_map('intval', $_POST['pratos']);
-        
-        try {
-            $pedidoManager->placeOrder($pratos, $mesa, $garcom);
-        } catch (\Throwable $th) {
-            echo $th->getMessage();
-        }
+
+
+        $pedidoManager->placeOrder($pratos, $mesa, $garcom);
+
     }
 
-    $pedidoManager = new PedidoManager();
     $pedidosAgrupados = $pedidoManager->getOrdersGroupedByTable();
     $cardapioManager = new CardapioManager();
     $pratos = $cardapioManager->getMenu();

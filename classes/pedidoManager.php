@@ -61,6 +61,7 @@ class PedidoManager {
     }
     public function getOrdersGroupedByTable() {
         $orders = $this->getOrders();
+        
         $groupedOrders = [];
 
         foreach ($orders as $order) {
