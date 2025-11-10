@@ -6,6 +6,7 @@ class Prato {
     public $price;
     public $ingredients;
 
+    public $removed = false;
     public function __construct($id, $name, $price, $ingredients) {
         $this->id = $id;
         $this->name = $name;
@@ -18,7 +19,8 @@ class Prato {
             'id' => $this->id,
             'name' => $this->name,
             'price' => $this->price,
-            'ingredients' => $this->ingredients
+            'ingredients' => $this->ingredients,
+            'removed' => $this->removed
         ];
     }
 }

@@ -1,13 +1,2 @@
 [
-    {
-        "id": 1,
-        "pratos": [
-            1,
-            2
-        ],
-        "mesa": "Mesa 5",
-        "garcom": "Allan",
-        "status": "enviado",
-        "dataHora": "2025-11-10 03:22:49"
-    }
 ]
