@@ -1,3 +1,24 @@
 [
-
+    {
+        "id": 1,
+        "name": "fdsfadfsadfasfasd",
+        "price": 1000,
+        "ingredients": [
+            "gasgsagsgsg",
+            "basgsgsgsgstata"
+        ],
+        "removed": false
+    },
+    {
+        "id": 2,
+        "name": "strogfsfsfsfsfsfsonoff",
+        "price": 500,
+        "ingredients": [
+            "tffafaomate",
+            "cebofafafafla",
+            "alafafaho",
+            "tttvinaaaaaaaagrsde"
+        ],
+        "removed": false
+    }
 ]

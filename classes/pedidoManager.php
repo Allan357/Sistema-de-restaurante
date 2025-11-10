@@ -55,6 +55,22 @@ class PedidoManager {
 
     // Listar pedidos (para cozinha ou admin)
     public function getOrders() {
-        return $this->storage->read();
+        return array_filter($this->storage->read(), function($order) {
+            return $order['status'] === 'enviado';
+        });
+    }
+    public function getOrdersGroupedByTable() {
+        $orders = $this->getOrders();
+        $groupedOrders = [];
+
+        foreach ($orders as $order) {
+            $mesa = $order['mesa'];
+            if (!isset($groupedOrders[$mesa])) {
+                $groupedOrders[$mesa] = [];
+            }
+            $groupedOrders[$mesa][] = $order;
+        }
+
+        return $groupedOrders;
     }
 }

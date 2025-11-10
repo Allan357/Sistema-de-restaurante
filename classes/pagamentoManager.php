@@ -9,7 +9,7 @@ class PagamentoManager{
     private $pedido;
 
     public function __construct(){
-        $this->armazenamento = new JsonStorage('../data/JsonStorage.php');
+        $this->armazenamento = new JsonStorage('../data/pagamentos.json');
         $this->cardapio = new CardapioManager();
         $this->pedido = new pedidoManager();
     }
