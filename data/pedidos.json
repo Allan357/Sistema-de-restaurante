@@ -1,2 +1,12 @@
 [
+    {
+        "id": 1,
+        "pratos": [
+            3
+        ],
+        "mesa": "1",
+        "garcom": "water",
+        "status": "enviado",
+        "dataHora": "2025-11-17 19:18:06"
+    }
 ]

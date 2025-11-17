@@ -1,157 +1,158 @@
 <?php
-
+require_once '../classes/auth.php';
 require_once '../classes/cardapioManager.php';
 
+$auth = new Auth();
+$auth->exigirLogin();        
+$auth->exigirAdmin();       
+
 $manager = new CardapioManager();
+$mensagem = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action'])) {
-        if ($_POST['action'] === 'add') {
-            $manager->addItem(htmlspecialchars_decode($_POST['nome']), htmlspecialchars_decode($_POST['preco']), htmlspecialchars_decode($_POST['ingredientes']));
-        }
-        elseif ($_POST['action'] === 'edit') {
-            $manager->editItem($_POST['id'], htmlspecialchars_decode($_POST['nome']), htmlspecialchars_decode($_POST['preco']), htmlspecialchars_decode($_POST['ingredientes']));
-        }
-        elseif ($_POST['action'] === 'delete') {
-            try {
-                $manager->removeItem($_POST['id']);
-            } catch (\Throwable $th) {
-                echo $th->getMessage();
+    try {
+        if (isset($_POST['action'])) {
+            switch ($_POST['action']) {
+                case 'add':
+                    $manager->addItem($_POST['nome'], $_POST['preco'], $_POST['ingredientes']);
+                    $mensagem = 'Prato adicionado com sucesso!';
+                    break;
+                case 'edit':
+                    $manager->editItem($_POST['id'], $_POST['nome'], $_POST['preco'], $_POST['ingredientes']);
+                    $mensagem = 'Prato editado com sucesso!';
+                    break;
+                case 'delete':
+                    $manager->removeItem($_POST['id']);
+                    $mensagem = 'Prato removido com sucesso!';
+                    break;
             }
         }
+    } catch (Exception $e) {
+        $mensagem = '<div class="alert alert-danger">' . $e->getMessage() . '</div>';
     }
 }
 
-
 $pratos = $manager->getMenu();
-
 ?>
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <title>Cardápio</title>
+    <title>Gerenciar Cardápio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
     <?php include '../includes/navbar.php'; ?>
-    <div class="container">
-        <div class="modal" id="novoPrato">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form action="" method="post">
-                        <input type="text" id="action" name="action" value="add" hidden>
-                        <div class="modal-header">
-                            <h1>Novo Prato</h1>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3">
-                                <label class="form-label" for="nome">Nome</label>
-                                <input type="text" class="form-control" id="nome" name="nome" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="preco">Preço</label>
-                                <input type="number" class="form-control" id="preco" name="preco" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="ingredientes">Ingreditentes</label>
-                                <input type="text" class="form-control" id="ingredientes" name="ingredientes" required>
-                                <small class="form-text text-muted">Separe cada ingrediente com uma vírgula (,)</small>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-target="#novoPrato">Fechar</button>
-                            <button type="submit" class="btn btn-primary">Salvar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <div class="modal" id="editarPrato">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form method="post">
-                        <div class="modal-header">
-                            <h1>Editar Prato</h1>
-                        </div>
-                        <div class="modal-body">
-                            <input type="text" id="edit-id" name="id" hidden>
-                            <input type="text" id="action" name="action" value="edit" hidden>
-                            <div class="mb-3">
-                                <label class="form-label" for="edit-nome">Nome</label>
-                                <input type="text" class="form-control" id="edit-nome" name="nome" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="preco">Preço</label>
-                                <input type="number" class="form-control" id="edit-preco" name="preco" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label" for="ingredientes">Ingreditentes</label>
-                                <input type="text" class="form-control" id="edit-ingredientes" name="ingredientes" required>
-                                <small class="form-text text-muted">Separe cada ingrediente com uma vírgula (,)</small>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-bs-target="#editarPrato">Fechar</button>
-                            <button type="submit" class="btn btn-primary">Salvar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Preço</th>
-                    <th scope="col">Ingredientes</th>
-                    <th scope="col">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($pratos as $prato) : ?>
-                    <tr>
-                        <th scope="row"><?= $prato['id'] ?></th>
-                        <td><?= htmlspecialchars($prato['name'])  ?></td>
-                        <td>R$ <?= htmlspecialchars($prato['price'])  ?></td>
-                        <td><?= htmlspecialchars(implode(', ', $prato['ingredients']))  ?></td>
-                        <td>
-                            <div class="d-flex flex-direction-column gap-2">
-                                <button class="btn btn-secondary edit-prato" data-bs-toggle="modal" data-bs-target="#editarPrato" data-id="<?= $prato['id'] ?>" data-nome="<?= $prato['name'] ?>" data-preco="<?= $prato['price'] ?>" data-ingredientes="<?= implode(', ', $prato['ingredients']) ?>">Editar</button>
-                                <form method="post">
-                                    <input type="text" id="action" name="action" value="delete" hidden>
-                                    <input type="text" id="id" name="id" value="<?= $prato['id'] ?>" hidden>
-                                    <button type="submit" class="btn btn-danger">Remover</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#novoPrato">Novo Prato</button>
-    </div>
-    <script>
-        const editPrato = document.querySelectorAll('.edit-prato');
 
-        editPrato.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const nome = btn.getAttribute('data-nome');
-                const preco = btn.getAttribute('data-preco');
-                const ingredientes = btn.getAttribute('data-ingredientes');
-    
-                document.getElementById('edit-id').value = id;
-                document.getElementById('edit-nome').value = nome;
-                document.getElementById('edit-preco').value = preco;
-                document.getElementById('edit-ingredientes').value = ingredientes;
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Gerenciar Cardápio</h1>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNovo">Novo Prato</button>
+        </div>
+
+        <?php if ($mensagem && !str_contains($mensagem, 'alert')): ?>
+            <div class="alert alert-success"><?= htmlspecialchars($mensagem) ?></div>
+        <?php elseif ($mensagem): ?>
+            <?= $mensagem ?>
+        <?php endif; ?>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Ingredientes</th>
+                        <th width="150">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($pratos as $prato): ?>
+                        <tr>
+                            <td><?= $prato['id'] ?></td>
+                            <td><?= htmlspecialchars($prato['name']) ?></td>
+                            <td>R$ <?= number_format($prato['price'], 2, ',', '.') ?></td>
+                            <td><?= htmlspecialchars(implode(', ', $prato['ingredients'])) ?></td>
+                            <td>
+                                <button class="btn btn-sm btn-warning editar" 
+                                        data-id="<?= $prato['id'] ?>"
+                                        data-nome="<?= htmlspecialchars($prato['name']) ?>"
+                                        data-preco="<?= $prato['price'] ?>"
+                                        data-ingredientes="<?= htmlspecialchars(implode(', ', $prato['ingredients'])) ?>">
+                                    Editar
+                                </button>
+                                <form method="post" class="d-inline">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="id" value="<?= $prato['id'] ?>">
+                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                            onclick="return confirm('Remover este prato?')">Remover</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNovo">
+        <div class="modal-dialog">
+            <form method="post">
+                <input type="hidden" name="action" value="add">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Novo Prato</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3"><input type="text" name="nome" class="form-control" placeholder="Nome do prato" required></div>
+                        <div class="mb-3"><input type="number" step="0.01" name="preco" class="form-control" placeholder="Preço" required></div>
+                        <div class="mb-3"><input type="text" name="ingredientes" class="form-control" placeholder="Ingredientes (separados por vírgula)" required></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEditar">
+        <div class="modal-dialog">
+            <form method="post">
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" name="id" id="edit-id">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Editar Prato</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3"><input type="text" name="nome" id="edit-nome" class="form-control" required></div>
+                        <div class="mb-3"><input type="number" step="0.01" name="preco" id="edit-preco" class="form-control" required></div>
+                        <div class="mb-3"><input type="text" name="ingredientes" id="edit-ingredientes" class="form-control" required></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('.editar').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('edit-id').value = this.dataset.id;
+                document.getElementById('edit-nome').value = this.dataset.nome;
+                document.getElementById('edit-preco').value = this.dataset.preco;
+                document.getElementById('edit-ingredientes').value = this.dataset.ingredientes;
+                new bootstrap.Modal(document.getElementById('modalEditar')).show();
             });
         });
     </script>
-
 </body>
 </html>

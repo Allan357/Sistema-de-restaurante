@@ -1,63 +1,82 @@
 <?php
-    require_once '../classes/PedidoManager.php';
-    require_once '../classes/CardapioManager.php';
+require_once '../classes/auth.php';
+require_once '../classes/pedidoManager.php';
+require_once '../classes/cardapioManager.php';
 
-    $pedidoManager = new PedidoManager();
+$auth = new Auth();
+$auth->exigirLogin(); 
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $mesa = htmlspecialchars($_POST['mesa']);
-        $garcom = htmlspecialchars($_POST['garcom']);
-        $pratos = array_map('intval', $_POST['pratos']);
+$pedidoManager = new PedidoManager();
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $mesa   = htmlspecialchars($_POST['mesa']);
+    $garcom = htmlspecialchars($_POST['garcom']);
+    $pratos = array_map('intval', $_POST['pratos'] ?? []);
 
+    if (!empty($pratos)) {
         $pedidoManager->placeOrder($pratos, $mesa, $garcom);
-
     }
+}
 
-    $pedidosAgrupados = $pedidoManager->getOrdersGroupedByTable();
-    $cardapioManager = new CardapioManager();
-    $pratos = $cardapioManager->getMenu();
-
+$pedidosAgrupados = $pedidoManager->getOrdersGroupedByTable();
+$cardapioManager  = new CardapioManager();
+$pratos           = $cardapioManager->getMenu();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <title>Pedidos</title>
+    <title>Pedidos - Restaurante</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
     <?php include '../includes/navbar.php'; ?>
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">Pedidos Agrupados por Mesa</h1>
-        <button class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#pedidoModal">Novo Pedido</button>
-        
+
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Pedidos por Mesa</h1>
+            <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#pedidoModal">
+                Novo Pedido
+            </button>
+        </div>
+
         <?php if (empty($pedidosAgrupados)): ?>
-            <div class="alert alert-warning text-center" role="alert">
-                Nenhum pedido foi encontrado.
+            <div class="alert alert-info text-center">
+                Nenhum pedido enviado no momento.
             </div>
         <?php else: ?>
             <?php foreach ($pedidosAgrupados as $mesa => $pedidos): ?>
-                <div class="card mb-3">
+                <div class="card mb-4 shadow-sm">
                     <div class="card-header bg-primary text-white">
-                        Mesa: <?= htmlspecialchars($mesa) ?>
+                        <h4 class="mb-0">Mesa <?= htmlspecialchars($mesa) ?></h4>
                     </div>
                     <div class="card-body">
-                        <ul class="list-group">
+                        <ul class="list-group list-group-flush">
                             <?php foreach ($pedidos as $pedido): ?>
                                 <li class="list-group-item">
-                                    <strong>Pedido ID:</strong> <?= htmlspecialchars($pedido['id']) ?> <br>
-                                    <strong>Pratos:</strong> <?= implode(', ', $pedido['pratos']) ?> <br>
-                                    <strong>Garçom:</strong> <?= htmlspecialchars($pedido['garcom']) ?> <br>
-                                    <strong>Status:</strong> <?= htmlspecialchars($pedido['status']) ?> <br>
-                                    <strong>Data/Hora:</strong> <?= htmlspecialchars($pedido['dataHora']) ?>
+                                    <strong>Pedido #<?= $pedido['id'] ?></strong> 
+                                    - Garçom: <?= htmlspecialchars($pedido['garcom']) ?>
+                                    <br><small class="text-muted"><?= $pedido['dataHora'] ?></small>
+                                    <ul class="mt-2">
+                                        <?php 
+                                        foreach ($pedido['pratos'] as $idPrato): 
+                                            foreach ($pratos as $item) {
+                                                if ($item['id'] == $idPrato) {
+                                                    echo '<li>' . htmlspecialchars($item['name']) . '</li>';
+                                                    break;
+                                                }
+                                            }
+                                        endforeach; 
+                                        ?>
+                                    </ul>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
-                        <div class="mt-3">
-                            <button class="btn btn-danger fechar-conta" data-mesa="<?= htmlspecialchars($mesa) ?>">Fechar Conta</button>
+                        <div class="text-end mt-3">
+                            <button class="btn btn-danger fechar-conta" data-mesa="<?= htmlspecialchars($mesa) ?>">
+                                Fechar Conta
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -65,48 +84,59 @@
         <?php endif; ?>
     </div>
 
-    <!-- Modal para Novo Pedido -->
-    <div class="modal fade" id="pedidoModal" tabindex="-1" aria-labelledby="pedidoModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+    <div class="modal fade" id="pedidoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="pedidoModalLabel">Novo Pedido</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="pedidoForm" method="post">
-                        <div class="mb-3">
-                            <label for="mesa" class="form-label">Mesa</label>
-                            <select class="form-select" id="mesa" name="mesa" required>
-                                <option value="" disabled selected>Selecione a mesa</option>
-                                <option value="1">Mesa 1</option>
-                                <option value="2">Mesa 2</option>
-                                <option value="3">Mesa 3</option>
-                                <option value="4">Mesa 4</option>
-                                <option value="5">Mesa 5</option>
-                            </select>
+                <form method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Novo Pedido</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Mesa</label>
+                                <select name="mesa" class="form-select" required>
+                                    <option value="" disabled selected>Selecione...</option>
+                                    <?php for ($i=1; $i<=10; $i++): ?>
+                                        <option value="<?= $i ?>">Mesa <?= $i ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Garçom</label>
+                                <input type="text" name="garcom" class="form-control" required>
+                            </div>
                         </div>
                         <div class="mb-3">
-                            <label for="garcom" class="form-label">Garçom</label>
-                            <input type="text" class="form-control" id="garcom" name="garcom" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="pratos" class="form-label">Pratos</label>
-                            <select class="form-select" id="pratos" name="pratos[]" multiple required>
-                                <option disabled>Segure Ctrl (ou Cmd no Mac) para selecionar vários pratos</option>
+                            <label class="form-label">Pratos (Ctrl+Clique para múltiplos)</label>
+                            <select name="pratos[]" class="form-select" size="8" multiple required>
                                 <?php foreach ($pratos as $prato): ?>
-                                    <option value="<?= htmlspecialchars($prato['id']) ?>"><?= htmlspecialchars($prato['name']) ?></option>
+                                    <option value="<?= $prato['id'] ?>">
+                                        <?= htmlspecialchars($prato['name']) ?> - R$ <?= number_format($prato['price'], 2, ',', '.') ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary">Enviar Pedido</button>
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <script>
+    document.querySelectorAll('.fechar-conta').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const mesa = this.getAttribute('data-mesa');
+            window.location.href = 'pagamento.php?mesa=' + encodeURIComponent(mesa);
+        });
+    });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

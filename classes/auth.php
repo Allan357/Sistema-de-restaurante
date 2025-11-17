@@ -1,48 +1,64 @@
 <?php
-require_once 'usuarioManager.php';
+if (!headers_sent() && session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-class auth{
+require_once __DIR__ . '/usuarioManager.php';
+
+class Auth {
     private $usuarioManager;
 
-    public function __construct(){
-        session_start();
-        $this->usuarioManager = new usuarioManager();
+    public function __construct() {
+        $this->usuarioManager = new UsuarioManager();
     }
-    public function login($login, $senha){
+
+    public function login($login, $senha) {
         $user = $this->usuarioManager->login($login, $senha);
-        $_SESSION ['usuario'] = $user;
+        $_SESSION['usuario'] = $user;
         return $user;
     }
-    public function logado(){
-        return isset($_SESSION ['usuario']); 
+
+    public function logado() {
+        return isset($_SESSION['usuario']);
     }
-    public function logout(){
-        unset($_SESSION ['usuario']);
+
+    public function logout() {
+        unset($_SESSION['usuario']);
         session_destroy();
+        header("Location: ../login.php");
+        exit;
     }
-    public function eAdmin(){
-        return $this->logado() && $_SESSION ['usuario']['tipo']==='admin';
+
+    public function eAdmin() {
+        return $this->logado() && ($_SESSION['usuario']['tipo'] ?? '') === 'admin';
     }
-    public function eGarcom(){
-        return $this->logado() && $_SESSION ['usuario']['tipo']==='garcom';
+
+    public function eGarcom() {
+        return $this->logado() && ($_SESSION['usuario']['tipo'] ?? '') === 'garcom';
     }
-    public function exigirGarcom(){
-        if (!$this->eGarcom()){
-            die('Acesso NEGADO');
+
+    public function exigirLogin() {
+        if (!$this->logado()) {
+            header("Location: ../login.php");
+            exit;
         }
     }
-    public function exigirAdmin(){
-        if (!$this->eAdmin()){
-            die('Acesso NEGADO');
+
+    public function exigirAdmin() {
+        if (!$this->eAdmin()) {
+            header("Location: ../login.php");
+            exit;
         }
     }
-    public function exigirLogin(){
-  if (!$this->logado()){
-            die('faca login para entrar');
+
+    public function exigirGarcom() {
+        if (!$this->eGarcom()) {
+            header("Location: ../login.php");
+            exit;
         }
     }
-    public function getUsuario(){
-        return $_SESSION['usuario']?? null;
+
+    public function getUsuario() {
+        return $_SESSION['usuario'] ?? null;
     }
 }
-?>
