@@ -39,13 +39,11 @@ class UsuarioManager {
 
     public function cadastroGarcom($nome, $login, $senha) {
         $usuarios = $this->storage->read();
-
         foreach ($usuarios as $user) {
             if ($user['login'] === $login) {
                 throw new Exception('Login já existente.');
             }
         }
-
         $id = count($usuarios) + 1;
         $usuarios[] = [
             'id' => $id,
@@ -54,8 +52,8 @@ class UsuarioManager {
             'senha' => password_hash($senha, PASSWORD_DEFAULT),
             'tipo' => 'garcom'
         ];
-
         $this->storage->write($usuarios);
         return "Garçom '$nome' cadastrado com sucesso.";
     }
 }
+?>

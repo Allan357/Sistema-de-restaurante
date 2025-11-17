@@ -1,1 +1,9 @@
-[]
+[
+    {
+        "id": 1,
+        "nome": "Admin",
+        "login": "admin",
+        "senha": "$2y$12$HAc9tddJo7vl7hh7yKhZa.OWa\/iBsDZqfnchGdEjcexWuHoVnc7za",
+        "tipo": "admin"
+    }
+]
