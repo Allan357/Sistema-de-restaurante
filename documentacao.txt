@@ -1,0 +1,13 @@
+https://www.php.net/manual/pt_BR/
+https://www.php.net/manual/pt_BR/function.password-hash.php
+https://www.php.net/manual/pt_BR/book.session.php
+https://www.php.net/manual/pt_BR/book.json.php
+https://www.php.net/manual/pt_BR/function.date.php
+
+Navbar: https://getbootstrap.com/docs/5.3/components/navbar/
+Modais: https://getbootstrap.com/docs/5.3/components/modal/
+Alerts: https://getbootstrap.com/docs/5.3/components/alerts/
+Tabelas: https://getbootstrap.com/docs/5.3/content/tables/
+
+https://www.php.net/manual/pt_BR/function.json-encode.php
+https://www.php.net/manual/pt_BR/function.htmlspecialchars.php
